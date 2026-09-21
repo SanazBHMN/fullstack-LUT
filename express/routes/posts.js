@@ -1,0 +1,35 @@
+const express = require("express");
+const router = express.Router();
+
+let posts = [
+  { id: 1, title: "Post One" },
+  { id: 2, title: "Post Two" },
+  { id: 3, title: "Post Three" },
+];
+
+// Get all posts
+router.get("/", (req, res) => {
+  const limit = req.query.limit;
+
+  if (!isNaN(limit) && limit > 0) {
+    return res.status(404).json(posts.slice(0, limit));
+  }
+
+  res.status(200).json(posts);
+});
+
+// Get a single post
+router.get("/:id", (req, res) => {
+  const postId = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === postId);
+
+  if (!post) {
+    return res
+      .status(404)
+      .json({ message: `A post with ID of ${postId} does not exist` });
+  }
+
+  res.status(200).json(post);
+});
+
+module.exports = router;
