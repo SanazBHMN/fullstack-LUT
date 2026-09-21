@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 
+const PORT = process.env.PORT || 8000;
+
 const app = express();
 
 // setup static folder
@@ -16,6 +18,6 @@ app.get("/api/posts", (req, res) => {
   res.json(posts);
 });
 
-app.listen(8000, () => {
-  console.log("THE SERVER IS RUNNING ON PORT 8000");
+app.listen(PORT, () => {
+  console.log(`THE SERVER IS RUNNING ON PORT ${PORT}`);
 });
