@@ -16,7 +16,7 @@ const logger = (req, res, next) => {
 };
 
 // Get all posts
-router.get("/", logger, (req, res) => {
+router.get("/", logger, (req, res, next) => {
   const limit = req.query.limit;
 
   if (!isNaN(limit) && limit > 0) {
@@ -27,28 +27,31 @@ router.get("/", logger, (req, res) => {
 });
 
 // Get a single post
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
   const postId = parseInt(req.params.id);
   const post = posts.find((post) => post.id === postId);
 
   if (!post) {
-    return res
-      .status(404)
-      .json({ message: `A post with ID of ${postId} does not exist` });
+    const error = new Error(`A post with ID of ${postId} does not exist`);
+    error.status = 404;
+    return next(error);
   }
 
   res.status(200).json(post);
 });
 
 // Create a new post
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const newPost = {
     id: posts.length + 1,
     title: req.body.title,
   };
 
   if (!newPost.title) {
-    return res.status(400).json({ message: `Please include a title` });
+    // return res.status(400).json({ message: `Please include a title` });
+    const err = new Error(`Please include a title`);
+    err.status = 400;
+    return next(err);
   }
 
   posts.push(newPost);
@@ -56,14 +59,14 @@ router.post("/", (req, res) => {
 });
 
 // Update a post
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res, next) => {
   const postId = parseInt(req.params.id);
   const post = posts.find((post) => post.id === postId);
 
   if (!post) {
-    return res
-      .status(404)
-      .json({ message: `A post with ID of ${postId} does not exist` });
+    const error = new Error(`A post with ID of ${postId} does not exist`);
+    error.status(404);
+    return next(err);
   }
 
   post.title = req.body.title;
@@ -71,14 +74,14 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete a post
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
   const postId = parseInt(req.params.id);
   const post = posts.find((post) => post.id === postId);
 
   if (!post) {
-    return res
-      .status(404)
-      .json({ message: `Cannot find post with id ${postId}` });
+    const error = new Error(`Cannot find post with id ${postId}`);
+    error.status = 404;
+    return next(error);
   }
 
   const updatedPosts = posts.filter((post) => post.id !== postId);
