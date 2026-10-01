@@ -6,7 +6,8 @@
     <title>Homepage</title>
   </head>
   <body>
-    <h1><%= title %></h1>
+    <%- include('partials/header.ejs') %>
+
     <p><%= message %></p>
     <ul>
        <% people.forEach(person => { %>
